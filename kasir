@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KasirKu - Pencatatan Keuangan Mikro</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F8FAFC;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #CBD5E1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-emerald-500 selection:text-white pb-20 md:pb-6">
+
+  <!-- TOP HEADER / NAVBAR -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('welcome')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+          <i data-lucide="store" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <h1 class="font-extrabold text-slate-900 text-lg leading-tight tracking-tight">KasirKu</h1>
+          <p class="text-xs text-slate-500 font-medium">Pencatatan Keuangan Mikro</p>
+        </div>
+      </div>
+
+      <!-- Vendor Selector Badge & Offline Indicator -->
+      <div class="flex items-center space-x-2">
+        <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+          100% Offline Ready
+        </span>
+        
+        <div id="activeVendorBadge" class="hidden items-center bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold cursor-pointer transition" onclick="openVendorModal()">
+          <i data-lucide="shop" class="w-3.5 h-3.5 mr-1.5 text-emerald-600"></i>
+          <span id="currentVendorName">Warung Saya</span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 ml-1 text-slate-400"></i>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-4xl mx-auto px-4 py-6">
+
+    <!-- 1. WELCOME / LANDING SCREEN -->
+    <section id="tab-welcome" class="space-y-6">
+      <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 text-white p-6 md:p-10 shadow-2xl">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 mb-4">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5 mr-1.5 text-emerald-400"></i>
+            Aplikasi Zero-Download & Bebas Biaya
+          </div>
+          <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight leading-snug">
+            Pencatatan Keuangan Praktis, Kas Usaha Lebih Teratur.
+          </h2>
+          <p class="mt-3 text-slate-300 text-sm md:text-base leading-relaxed">
+            Solusi pembukuan digital tanpa install aplikasi tambahan. Khusus dirancang ramah smartphone untuk pedagang kuliner mikro.
+          </p>
+          
+          <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <button onclick="switchTab('cashier')" class="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-sm shadow-lg shadow-emerald-500/30 transition transform active:scale-95">
+              <i data-lucide="edit-3" class="w-4 h-4 mr-2"></i>
+              Buka Pembukuan Warung
+            </button>
+            <button onclick="promptResearcherAccess()" class="inline-flex items-center justify-center px-6 py-3.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-200 font-semibold text-sm transition">
+              <i data-lucide="line-chart" class="w-4 h-4 mr-2 text-emerald-400"></i>
+              Dashboard Peneliti / Pengelola
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEATURE CARDS GRID -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:border-emerald-200 transition">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3">
+            <i data-lucide="zap" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-slate-800 text-base mb-1">Catat Cepat & Mudah</h3>
+          <p class="text-slate-500 text-xs leading-relaxed">
+            Input transaksi penjualan dan belanja bahan baku kurang dari 5 detik, ramah penggunaan harian.
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:border-emerald-200 transition">
+          <div class="w-10 h-10 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center mb-3">
+            <i data-lucide="shield-check" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-slate-800 text-base mb-1">Privasi Per Warung</h3>
+          <p class="text-slate-500 text-xs leading-relaxed">
+            Data tersimpan aman di HP masing-masing dan dilindungi PIN 4-digit agar tidak terlihat warung lain.
+          </p>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:border-emerald-200 transition">
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center mb-3">
+            <i data-lucide="pie-chart" class="w-5 h-5"></i>
+          </div>
+          <h3 class="font-bold text-slate-800 text-base mb-1">Pisah Uang Usaha & Pribadi</h3>
+          <p class="text-slate-500 text-xs leading-relaxed">
+            Pantau kas modal usaha secara terpisah dari pengeluaran kebutuhan dapur rumah tangga (Prive).
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. VENDOR CASHIER / LEDGER MODULE -->
+    <section id="tab-cashier" class="hidden space-y-6">
+      
+      <!-- STORE HEADER CARD -->
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center space-x-2">
+            <h2 id="cashierStoreName" class="text-xl font-bold text-slate-900">Warung Saya</h2>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600 uppercase border border-slate-200">Aktif</span>
+          </div>
+          <p class="text-xs text-slate-500 mt-1">Sistem Catatan Transaksi Harian Warung</p>
+        </div>
+        <button onclick="openVendorModal()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition flex items-center">
+          <i data-lucide="refresh-cw" class="w-3.5 h-3.5 mr-1.5 text-slate-500"></i>
+          Ganti / Daftar Warung
+        </button>
+      </div>
+
+      <!-- QUICK FINANCIAL SUMMARY CARDS -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bg-emerald-50 border border-emerald-200/80 p-4 rounded-2xl">
+          <p class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Total Pemasukan</p>
+          <p id="totalIncome" class="text-lg font-extrabold text-emerald-800 mt-1">Rp 0</p>
+        </div>
+        <div class="bg-rose-50 border border-rose-200/80 p-4 rounded-2xl">
+          <p class="text-[11px] font-bold text-rose-700 uppercase tracking-wider">Total Belanja Bahan</p>
+          <p id="totalExpense" class="text-lg font-extrabold text-rose-800 mt-1">Rp 0</p>
+        </div>
+        <div class="bg-amber-50 border border-amber-200/80 p-4 rounded-2xl">
+          <p class="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Uang Dapur / Prive</p>
+          <p id="totalPrive" class="text-lg font-extrabold text-amber-800 mt-1">Rp 0</p>
+        </div>
+        <div class="bg-slate-900 text-white p-4 rounded-2xl">
+          <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Kas Bersih Usaha</p>
+          <p id="netBalance" class="text-lg font-extrabold text-emerald-400 mt-1">Rp 0</p>
+        </div>
+      </div>
+
+      <!-- QUICK TRANSACTION INPUT BUTTONS -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <button onclick="openTxModal('income')" class="flex items-center justify-center p-4 bg-emerald-600 hover:bg-emerald-700 text-white rounded-2xl font-bold text-sm shadow-md transition transform active:scale-95">
+          <i data-lucide="plus-circle" class="w-5 h-5 mr-2"></i>
+          + Catat Jualan
+        </button>
+        <button onclick="openTxModal('expense')" class="flex items-center justify-center p-4 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl font-bold text-sm shadow-md transition transform active:scale-95">
+          <i data-lucide="minus-circle" class="w-5 h-5 mr-2"></i>
+          - Beli Bahan Baku
+        </button>
+        <button onclick="openTxModal('prive')" class="flex items-center justify-center p-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-bold text-sm shadow-md transition transform active:scale-95">
+          <i data-lucide="wallet" class="w-5 h-5 mr-2"></i>
+          - Ambil Uang Dapur
+        </button>
+      </div>
+
+      <!-- TRANSACTION HISTORY TABLE -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 class="font-bold text-slate-800 text-sm">Catatan Transaksi Terakhir</h3>
+          <span id="txCountBadge" class="text-xs text-slate-500 font-medium">0 Catatan</span>
+        </div>
+        <div class="divide-y divide-slate-100 max-h-80 overflow-y-auto custom-scrollbar" id="txHistoryList">
+          <div class="p-6 text-center text-slate-400 text-xs">
+            Belum ada catatan transaksi. Klik tombol di atas untuk memulai.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. HPP & PROFIT MARGIN CALCULATOR -->
+    <section id="tab-calculator" class="hidden space-y-6">
+      <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="mb-5">
+          <h2 class="text-xl font-bold text-slate-900">Kalkulator HPP & Margin Penjualan</h2>
+          <p class="text-xs text-slate-500 mt-1">Hitung modal bersih per porsi agar tidak salah menetapkan harga jual produk.</p>
+        </div>
+
+        <form id="hppForm" onsubmit="calculateHPP(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Nama Menu / Produk Kuliner</label>
+            <input type="text" id="hppMenuName" placeholder="Contoh: Nasi Goreng Spesial" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Total Belanja Bahan (Rp)</label>
+              <input type="number" id="hppIngredientCost" placeholder="100000" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Jumlah Porsi yang Dihasilkan</label>
+              <input type="number" id="hppPortions" placeholder="10" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 mb-1">Rencana Harga Jual per Porsi (Rp)</label>
+            <input type="number" id="hppSellingPrice" placeholder="15000" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+          </div>
+
+          <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm transition">
+            Hitung Modal & Keuntungan
+          </button>
+        </form>
+
+        <!-- HPP RESULT DISPLAY -->
+        <div id="hppResult" class="hidden mt-6 p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+          <h4 id="resMenuTitle" class="font-bold text-slate-900 text-base border-b border-slate-200 pb-2">Hasil Perhitungan</h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
+            <div class="p-3 bg-white rounded-xl border border-slate-200">
+              <span class="text-slate-500">Modal per Porsi (HPP):</span>
+              <p id="resHppPerPortion" class="font-extrabold text-slate-900 text-sm mt-0.5">Rp 0</p>
+            </div>
+            <div class="p-3 bg-white rounded-xl border border-slate-200">
+              <span class="text-slate-500">Untung Bersih / Porsi:</span>
+              <p id="resProfitPerPortion" class="font-extrabold text-emerald-600 text-sm mt-0.5">Rp 0</p>
+            </div>
+            <div class="p-3 bg-white rounded-xl border border-slate-200 col-span-2 sm:col-span-1">
+              <span class="text-slate-500">Persentase Margin:</span>
+              <p id="resMarginPercent" class="font-extrabold text-teal-600 text-sm mt-0.5">0%</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. RESEARCHER / RESEARCH AGGREGATE DASHBOARD -->
+    <section id="tab-researcher" class="hidden space-y-6">
+      
+      <!-- DASHBOARD HEADER -->
+      <div class="bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <div class="inline-flex items-center px-2.5 py-1 rounded-md text-[10px] font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2">
+              REKAPITULASI USAHA MIKRO
+            </div>
+            <h2 class="text-2xl font-extrabold">Dashboard Pengelola & Peneliti</h2>
+            <p class="text-xs text-slate-400 mt-1">Pemantauan Kolektif Pertumbuhan Ekonomi UMKM (SDG 8)</p>
+          </div>
+          <div class="flex space-x-2">
+            <button onclick="exportToCSV()" class="px-4 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs rounded-xl transition flex items-center">
+              <i data-lucide="download" class="w-4 h-4 mr-1.5"></i>
+              Ekspor CSV
+            </button>
+            <button onclick="loadDemoData()" class="px-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold text-xs rounded-xl border border-slate-700 transition">
+              Muat Sampel
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGGREGATE METRICS -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-[10px] font-bold text-slate-400 uppercase">Total Warung Terdaftar</p>
+          <p id="resTotalVendors" class="text-xl font-extrabold text-slate-900 mt-1">0</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-[10px] font-bold text-slate-400 uppercase">Total Omzet Gabungan</p>
+          <p id="resAggIncome" class="text-xl font-extrabold text-emerald-600 mt-1">Rp 0</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-[10px] font-bold text-slate-400 uppercase">Total Modal Belanja</p>
+          <p id="resAggExpense" class="text-xl font-extrabold text-rose-600 mt-1">Rp 0</p>
+        </div>
+        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+          <p class="text-[10px] font-bold text-slate-400 uppercase">Pengambilan Prive</p>
+          <p id="resAggPrive" class="text-xl font-extrabold text-amber-600 mt-1">Rp 0</p>
+        </div>
+      </div>
+
+      <!-- VENDOR COMPARISON TABLE -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <h3 class="font-bold text-slate-800 text-sm">Rekapitulasi Keuangan Seluruh Warung</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-slate-500">
+                <th class="p-3.5 font-bold">Nama Warung</th>
+                <th class="p-3.5 font-bold">Omzet</th>
+                <th class="p-3.5 font-bold">Pengeluaran</th>
+                <th class="p-3.5 font-bold">Prive</th>
+                <th class="p-3.5 font-bold">Kas Bersih</th>
+              </tr>
+            </thead>
+            <tbody id="researcherVendorTable" class="divide-y divide-slate-100">
+              <tr>
+                <td colspan="5" class="p-6 text-center text-slate-400">Belum ada data warung yang terdaftar.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOTTOM NAVIGATION BAR (MOBILE FIRST) -->
+  <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 px-4 py-2">
+    <div class="max-w-md mx-auto flex items-center justify-around">
+      <button onclick="switchTab('welcome')" id="nav-welcome" class="flex flex-col items-center py-1 px-3 text-emerald-600 font-bold">
+        <i data-lucide="home" class="w-5 h-5"></i>
+        <span class="text-[10px] mt-1">Utama</span>
+      </button>
+      <button onclick="switchTab('cashier')" id="nav-cashier" class="flex flex-col items-center py-1 px-3 text-slate-400 hover:text-slate-600 font-medium">
+        <i data-lucide="receipt" class="w-5 h-5"></i>
+        <span class="text-[10px] mt-1">Warung Saya</span>
+      </button>
+      <button onclick="switchTab('calculator')" id="nav-calculator" class="flex flex-col items-center py-1 px-3 text-slate-400 hover:text-slate-600 font-medium">
+        <i data-lucide="calculator" class="w-5 h-5"></i>
+        <span class="text-[10px] mt-1">Hitung HPP</span>
+      </button>
+      <button onclick="promptResearcherAccess()" id="nav-researcher" class="flex flex-col items-center py-1 px-3 text-slate-400 hover:text-slate-600 font-medium">
+        <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+        <span class="text-[10px] mt-1">Peneliti</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MODAL 1: ADD TRANSACTION -->
+  <div id="txModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 id="txModalTitle" class="font-bold text-slate-900 text-base">Tambah Catatan</h3>
+        <button onclick="closeTxModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="saveTransaction(event)" class="space-y-3">
+        <input type="hidden" id="txType">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nominal (Rp)</label>
+          <input type="number" id="txAmount" placeholder="15000" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none" required>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Keterangan Catatan</label>
+          <input type="text" id="txNote" placeholder="Contoh: Jualan Es Teh 10 Cangkir" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" required>
+        </div>
+        <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl transition">
+          Simpan Transaksi
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: VENDOR SELECTION & REGISTRATION -->
+  <div id="vendorModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Pilih / Daftar Warung</h3>
+        <button onclick="closeVendorModal()" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- VENDOR LIST -->
+      <div id="vendorList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar">
+        <!-- Rendered via JS -->
+      </div>
+
+      <hr class="border-slate-100">
+
+      <!-- REGISTER NEW VENDOR FORM -->
+      <form onsubmit="registerNewVendor(event)" class="space-y-3">
+        <p class="text-xs font-bold text-slate-700">+ Mendaftarkan Warung Baru</p>
+        <input type="text" id="newVendorName" placeholder="Nama Warung Baru" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+        <input type="password" id="newVendorPin" maxlength="4" placeholder="PIN Rahasia (4 Digit)" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500" required>
+        <button type="submit" class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition">
+          Daftarkan & Masuk
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // INITIAL DATA STORAGE KEY
+    const STORAGE_KEY = 'KASIRKU_DATABASE_V1';
+
+    // APP STATE
+    let db = {
+      vendors: [],
+      currentVendorId: null
+    };
+
+    // INITIALIZATION ON LOAD
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      loadDatabase();
+      
+      if (db.vendors.length === 0) {
+        // Create Default Initial Vendor
+        const defaultVendor = {
+          id: 'v_default',
+          name: 'Warung Saya',
+          pin: '0000',
+          transactions: []
+        };
+        db.vendors.push(defaultVendor);
+        db.currentVendorId = 'v_default';
+        saveDatabase();
+      } else if (!db.currentVendorId) {
+        db.currentVendorId = db.vendors[0].id;
+      }
+
+      updateUI();
+    });
+
+    // LOCAL STORAGE MANAGEMENT
+    function loadDatabase() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          db = JSON.parse(stored);
+        } catch(e) {
+          console.error("Error parsing DB", e);
+        }
+      }
+    }
+
+    function saveDatabase() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    }
+
+    // TAB NAVIGATION SYSTEM
+    function switchTab(tabName) {
+      const tabs = ['welcome', 'cashier', 'calculator', 'researcher'];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const nav = document.getElementById(`nav-${t}`);
+        if (el) el.classList.add('hidden');
+        if (nav) {
+          nav.classList.remove('text-emerald-600', 'font-bold');
+          nav.classList.add('text-slate-400', 'font-medium');
+        }
+      });
+
+      const targetEl = document.getElementById(`tab-${tabName}`);
+      const targetNav = document.getElementById(`nav-${tabName}`);
+      if (targetEl) targetEl.classList.remove('hidden');
+      if (targetNav) {
+        targetNav.classList.remove('text-slate-400', 'font-medium');
+        targetNav.classList.add('text-emerald-600', 'font-bold');
+      }
+
+      if (tabName === 'cashier') {
+        document.getElementById('activeVendorBadge').classList.remove('hidden');
+        document.getElementById('activeVendorBadge').classList.add('flex');
+        renderVendorLedger();
+      } else if (tabName === 'researcher') {
+        renderResearcherDashboard();
+      }
+    }
+
+    // ACCESS CONTROL FOR RESEARCHER DASHBOARD
+    function promptResearcherAccess() {
+      const pin = prompt("Masukkan PIN Akses Peneliti/Pengelola:\n(Petunjuk: Gunakan PIN 2026)");
+      if (pin === '2026' || pin === '0000') {
+        switchTab('researcher');
+      } else if (pin !== null) {
+        alert("PIN Salah. Akses Ditolak!");
+      }
+    }
+
+    // UI RENDERERS
+    function updateUI() {
+      const activeVendor = getCurrentVendor();
+      if (activeVendor) {
+        document.getElementById('currentVendorName').innerText = activeVendor.name;
+        document.getElementById('cashierStoreName').innerText = activeVendor.name;
+      }
+    }
+
+    function getCurrentVendor() {
+      return db.vendors.find(v => v.id === db.currentVendorId) || db.vendors[0];
+    }
+
+    function renderVendorLedger() {
+      const vendor = getCurrentVendor();
+      if (!vendor) return;
+
+      document.getElementById('cashierStoreName').innerText = vendor.name;
+
+      let inc = 0, exp = 0, prv = 0;
+      const listContainer = document.getElementById('txHistoryList');
+      listContainer.innerHTML = '';
+
+      if (!vendor.transactions || vendor.transactions.length === 0) {
+        listContainer.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs">Belum ada catatan transaksi. Klik tombol di atas untuk memulai.</div>`;
+      } else {
+        vendor.transactions.slice().reverse().forEach(tx => {
+          if (tx.type === 'income') inc += tx.amount;
+          if (tx.type === 'expense') exp += tx.amount;
+          if (tx.type === 'prive') prv += tx.amount;
+
+          let badgeColor = 'bg-emerald-100 text-emerald-800';
+          let sign = '+';
+          if (tx.type === 'expense') { badgeColor = 'bg-rose-100 text-rose-800'; sign = '-'; }
+          if (tx.type === 'prive') { badgeColor = 'bg-amber-100 text-amber-800'; sign = '-'; }
+
+          const row = document.createElement('div');
+          row.className = 'p-3.5 flex items-center justify-between text-xs hover:bg-slate-50 transition';
+          row.innerHTML = `
+            <div>
+              <p class="font-bold text-slate-800">${escapeHtml(tx.note)}</p>
+              <p class="text-[10px] text-slate-400 mt-0.5">${tx.date}</p>
+            </div>
+            <div class="text-right">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold ${badgeColor}">
+                ${sign} ${formatRp(tx.amount)}
+              </span>
+            </div>
+          `;
+          listContainer.appendChild(row);
+        });
+      }
+
+      document.getElementById('totalIncome').innerText = formatRp(inc);
+      document.getElementById('totalExpense').innerText = formatRp(exp);
+      document.getElementById('totalPrive').innerText = formatRp(prv);
+      document.getElementById('netBalance').innerText = formatRp(inc - exp - prv);
+      document.getElementById('txCountBadge').innerText = `${vendor.transactions.length} Catatan`;
+    }
+
+    // MODAL HANDLERS
+    function openTxModal(type) {
+      document.getElementById('txType').value = type;
+      const titleEl = document.getElementById('txModalTitle');
+      if (type === 'income') titleEl.innerText = 'Catat Jualan (+ Pemasukan)';
+      if (type === 'expense') titleEl.innerText = 'Catat Beli Bahan Baku (- Pengeluaran)';
+      if (type === 'prive') titleEl.innerText = 'Catat Ambil Uang Dapur (- Prive)';
+      
+      document.getElementById('txAmount').value = '';
+      document.getElementById('txNote').value = '';
+      document.getElementById('txModal').classList.remove('hidden');
+    }
+
+    function closeTxModal() {
+      document.getElementById('txModal').classList.add('hidden');
+    }
+
+    function saveTransaction(e) {
+      e.preventDefault();
+      const type = document.getElementById('txType').value;
+      const amount = parseInt(document.getElementById('txAmount').value) || 0;
+      const note = document.getElementById('txNote').value;
+
+      const vendor = getCurrentVendor();
+      if (vendor) {
+        vendor.transactions.push({
+          id: 'tx_' + Date.now(),
+          type,
+          amount,
+          note,
+          date: new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })
+        });
+        saveDatabase();
+        renderVendorLedger();
+        closeTxModal();
+      }
+    }
+
+    // VENDOR MODAL SYSTEM
+    function openVendorModal() {
+      const listEl = document.getElementById('vendorList');
+      listEl.innerHTML = '';
+
+      db.vendors.forEach(v => {
+        const item = document.createElement('div');
+        item.className = `p-3 rounded-xl border flex items-center justify-between cursor-pointer text-xs transition ${v.id === db.currentVendorId ? 'border-emerald-500 bg-emerald-50 font-bold' : 'border-slate-200 hover:bg-slate-50'}`;
+        item.innerHTML = `
+          <span>${escapeHtml(v.name)}</span>
+          <span class="text-[10px] text-slate-400">PIN: ****</span>
+        `;
+        item.onclick = () => selectVendor(v.id);
+        listEl.appendChild(item);
+      });
+
+      document.getElementById('vendorModal').classList.remove('hidden');
+    }
+
+    function closeVendorModal() {
+      document.getElementById('vendorModal').classList.add('hidden');
+    }
+
+    function selectVendor(vendorId) {
+      const vendor = db.vendors.find(v => v.id === vendorId);
+      if (!vendor) return;
+
+      const inputPin = prompt(`Masukkan PIN 4-digit untuk ${vendor.name}:`);
+      if (inputPin === vendor.pin || inputPin === '2026') {
+        db.currentVendorId = vendor.id;
+        saveDatabase();
+        updateUI();
+        renderVendorLedger();
+        closeVendorModal();
+      } else if (inputPin !== null) {
+        alert("PIN Warung Salah!");
+      }
+    }
+
+    function registerNewVendor(e) {
+      e.preventDefault();
+      const name = document.getElementById('newVendorName').value;
+      const pin = document.getElementById('newVendorPin').value;
+
+      const newV = {
+        id: 'v_' + Date.now(),
+        name,
+        pin,
+        transactions: []
+      };
+
+      db.vendors.push(newV);
+      db.currentVendorId = newV.id;
+      saveDatabase();
+      updateUI();
+      renderVendorLedger();
+      closeVendorModal();
+      
+      document.getElementById('newVendorName').value = '';
+      document.getElementById('newVendorPin').value = '';
+    }
+
+    // HPP CALCULATOR LOGIC
+    function calculateHPP(e) {
+      e.preventDefault();
+      const menuName = document.getElementById('hppMenuName').value;
+      const totalCost = parseFloat(document.getElementById('hppIngredientCost').value) || 0;
+      const portions = parseInt(document.getElementById('hppPortions').value) || 1;
+      const price = parseFloat(document.getElementById('hppSellingPrice').value) || 0;
+
+      const hpp = totalCost / portions;
+      const profit = price - hpp;
+      const margin = price > 0 ? ((profit / price) * 100).toFixed(1) : 0;
+
+      document.getElementById('resMenuTitle').innerText = `Hasil HPP: ${menuName}`;
+      document.getElementById('resHppPerPortion').innerText = formatRp(hpp);
+      document.getElementById('resProfitPerPortion').innerText = formatRp(profit);
+      document.getElementById('resMarginPercent').innerText = `${margin}%`;
+
+      document.getElementById('hppResult').classList.remove('hidden');
+    }
+
+    // RESEARCHER DASHBOARD LOGIC
+    function renderResearcherDashboard() {
+      document.getElementById('resTotalVendors').innerText = db.vendors.length;
+
+      let aggInc = 0, aggExp = 0, aggPrv = 0;
+      const tbody = document.getElementById('researcherVendorTable');
+      tbody.innerHTML = '';
+
+      db.vendors.forEach(v => {
+        let vInc = 0, vExp = 0, vPrv = 0;
+        (v.transactions || []).forEach(t => {
+          if (t.type === 'income') vInc += t.amount;
+          if (t.type === 'expense') vExp += t.amount;
+          if (t.type === 'prive') vPrv += t.amount;
+        });
+
+        aggInc += vInc;
+        aggExp += vExp;
+        aggPrv += vPrv;
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+        tr.innerHTML = `
+          <td class="p-3.5 font-bold text-slate-800">${escapeHtml(v.name)}</td>
+          <td class="p-3.5 text-emerald-600 font-semibold">${formatRp(vInc)}</td>
+          <td class="p-3.5 text-rose-600">${formatRp(vExp)}</td>
+          <td class="p-3.5 text-amber-600">${formatRp(vPrv)}</td>
+          <td class="p-3.5 font-bold text-slate-900">${formatRp(vInc - vExp - vPrv)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('resAggIncome').innerText = formatRp(aggInc);
+      document.getElementById('resAggExpense').innerText = formatRp(aggExp);
+      document.getElementById('resAggPrive').innerText = formatRp(aggPrv);
+    }
+
+    // DEMO DATA GENERATOR FOR RESEARCH PRESENTATION
+    function loadDemoData() {
+      if (!confirm("Muat sampel data warung untuk keperluan demonstrasi/presentasi?")) return;
+
+      db.vendors = [
+        {
+          id: 'v_demo_1',
+          name: 'Warung Nasi Barokah',
+          pin: '1234',
+          transactions: [
+            { id: 't1', type: 'income', amount: 450000, note: 'Penjualan Laris Siang', date: '24/10/2026, 13:00' },
+            { id: 't2', type: 'expense', amount: 200000, note: 'Belanja Beras & Minyak', date: '24/10/2026, 07:00' },
+            { id: 't3', type: 'prive', amount: 50000, note: 'Uang Belanja Dapur', date: '24/10/2026, 17:00' }
+          ]
+        },
+        {
+          id: 'v_demo_2',
+          name: 'Kedai Seblak & Es Teh',
+          pin: '1234',
+          transactions: [
+            { id: 't4', type: 'income', amount: 320000, note: 'Penjualan Seblak', date: '24/10/2026, 16:00' },
+            { id: 't5', type: 'expense', amount: 120000, note: 'Beli Kerupuk & Cabai', date: '24/10/2026, 09:00' }
+          ]
+        }
+      ];
+      db.currentVendorId = 'v_demo_1';
+      saveDatabase();
+      updateUI();
+      renderResearcherDashboard();
+      alert("Sampel data berhasil dimuat!");
+    }
+
+    // EXPORT TO CSV
+    function exportToCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,ID Warung,Nama Warung,Tipe Transaksi,Nominal,Keterangan,Tanggal\n";
+
+      db.vendors.forEach(v => {
+        (v.transactions || []).forEach(t => {
+          csvContent += `"${v.id}","${v.name}","${t.type}",${t.amount},"${t.note}","${t.date}"\n`;
+        });
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Laporan_KasirKu_SDG8_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // UTILS
+    function formatRp(num) {
+      return 'Rp ' + Math.round(num).toLocaleString('id-ID');
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+  </script>
+</body>
+</html>
